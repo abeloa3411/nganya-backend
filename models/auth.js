@@ -24,16 +24,16 @@ AuthSchema.statics.signup = async function (full_name, email, password) {
 
   //if user exist
 
-  const userExist = this.findOne({ email: email });
+  const userExist = await this.findOne({ email: email });
 
   if (userExist) {
     throw new Error("User already exists");
   }
 
-  const salt = bcrypt.genSalt(10);
-  const hash = bcrypt.hash(password, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
 
-  const newUser = this.create({ full_name, email, password: hash });
+  const newUser = await this.create({ full_name, email, password: hash });
   return newUser;
 };
 
@@ -44,12 +44,12 @@ AuthSchema.statics.login = async function (email, password) {
     throw new Error("please fill all fields");
   }
 
-  const user = this.findOne({ email: email });
+  const user = await this.findOne({ email: email });
   if (!exists) {
     throw new Error("user does not exist");
   }
 
-  const match = bcrypt.compare(password, user.password);
+  const match = await bcrypt.compare(password, user.password);
   if (!match) {
     throw new Error("password does not match");
   }
